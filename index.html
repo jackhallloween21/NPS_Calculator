@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPS Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .title {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .input-section {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .result-section {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3436;
+            font-weight: 500;
+        }
+
+        input[type="number"], input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        input[type="range"] {
+            padding: 0;
+        }
+
+        .result-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .result-title {
+            color: #636e72;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #2d3436;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .progress-ring {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">NPS Calculator</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="monthlyInvestment">Monthly Investment (₹)</label>
+                <input type="number" id="monthlyInvestment" value="500" min="500">
+            </div>
+
+            <div class="input-group">
+                <label for="age">Your Age (years)</label>
+                <input type="range" id="age" min="18" max="60" value="30">
+                <span id="ageValue">30</span>
+            </div>
+
+            <div class="input-group">
+                <label for="returnRate">Expected Return on Investment (%)</label>
+                <input type="range" id="returnRate" min="1" max="20" value="13">
+                <span id="returnValue">13</span>
+            </div>
+
+            <div class="input-group">
+                <label for="annuityPurchase">Percentage of Annuity Purchase (%)</label>
+                <input type="range" id="annuityPurchase" min="0" max="100" value="40">
+                <span id="annuityValue">40</span>
+            </div>
+
+            <div class="input-group">
+                <label for="annuityReturn">Expected Return of Annuity (%)</label>
+                <input type="range" id="annuityReturn" min="1" max="15" value="8">
+                <span id="annuityReturnValue">8</span>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="progress-ring" id="progressRing"></div>
+            
+            <div class="result-card">
+                <div class="result-title">Invested Amount</div>
+                <div class="result-value" id="investedAmount">₹0</div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-title">Pension Wealth</div>
+                <div class="result-value" id="pensionWealth">₹0</div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-title">Lumpsum Amount</div>
+                <div class="result-value" id="lumpsumAmount">₹0</div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-title">Monthly Pension</div>
+                <div class="result-value" id="monthlyPension">₹0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get all input elements
+        const monthlyInvestment = document.getElementById('monthlyInvestment');
+        const age = document.getElementById('age');
+        const returnRate = document.getElementById('returnRate');
+        const annuityPurchase = document.getElementById('annuityPurchase');
+        const annuityReturn = document.getElementById('annuityReturn');
+
+        // Get all display elements
+        const ageValue = document.getElementById('ageValue');
+        const returnValue = document.getElementById('returnValue');
+        const annuityValue = document.getElementById('annuityValue');
+        const annuityReturnValue = document.getElementById('annuityReturnValue');
+        const investedAmount = document.getElementById('investedAmount');
+        const pensionWealth = document.getElementById('pensionWealth');
+        const lumpsumAmount = document.getElementById('lumpsumAmount');
+        const monthlyPension = document.getElementById('monthlyPension');
+
+        // Update display values for range inputs
+        age.addEventListener('input', () => ageValue.textContent = age.value);
+        returnRate.addEventListener('input', () => returnValue.textContent = returnRate.value);
+        annuityPurchase.addEventListener('input', () => annuityValue.textContent = annuityPurchase.value);
+        annuityReturn.addEventListener('input', () => annuityReturnValue.textContent = annuityReturn.value);
+
+        // Calculate NPS returns
+        function calculateNPS() {
+            const monthly = parseFloat(monthlyInvestment.value);
+            const years = 60 - parseFloat(age.value);
+            const rate = parseFloat(returnRate.value) / 100;
+            const annuityPerc = parseFloat(annuityPurchase.value) / 100;
+            const annuityRate = parseFloat(annuityReturn.value) / 100;
+
+            // Calculate total investment
+            const totalInvestment = monthly * 12 * years;
+
+            // Calculate pension wealth using compound interest formula
+            const pensionWealthValue = monthly * (Math.pow(1 + rate/12, 12 * years) - 1) / (rate/12);
+
+            // Calculate lumpsum and annuity amounts
+            const annuityAmount = pensionWealthValue * annuityPerc;
+            const lumpsumValue = pensionWealthValue * (1 - annuityPerc);
+
+            // Calculate monthly pension (simplified calculation)
+            const monthlyPensionValue = (annuityAmount * annuityRate) / 12;
+
+            // Update display values
+            investedAmount.textContent = `₹${Math.round(totalInvestment).toLocaleString()}`;
+            pensionWealth.textContent = `₹${Math.round(pensionWealthValue).toLocaleString()}`;
+            lumpsumAmount.textContent = `₹${Math.round(lumpsumValue).toLocaleString()}`;
+            monthlyPension.textContent = `₹${Math.round(monthlyPensionValue).toLocaleString()}`;
+
+            // Update progress ring
+            updateProgressRing(annuityPerc);
+        }
+
+        // Create and update SVG progress ring
+        function updateProgressRing(percentage) {
+            const progressRing = document.getElementById('progressRing');
+            const radius = 80;
+            const circumference = 2 * Math.PI * radius;
+            const progress = percentage * circumference;
+
+            progressRing.innerHTML = `
+                <svg width="200" height="200" viewBox="0 0 200 200">
+                    <circle
+                        cx="100"
+                        cy="100"
+                        r="${radius}"
+                        fill="none"
+                        stroke="#dfe6e9"
+                        stroke-width="20"
+                    />
+                    <circle
+                        cx="100"
+                        cy="100"
+                        r="${radius}"
+                        fill="none"
+                        stroke="#00b894"
+                        stroke-width="20"
+                        stroke-dasharray="${circumference}"
+                        stroke-dashoffset="${circumference - progress}"
+                        transform="rotate(-90 100 100)"
+                    />
+                    <text
+                        x="100"
+                        y="100"
+                        text-anchor="middle"
+                        dominant-baseline="middle"
+                        font-size="24"
+                        font-weight="bold"
+                        fill="#2d3436"
+                    >${Math.round(percentage * 100)}%</text>
+                </svg>
+            `;
+        }
+
+        // Add event listeners to all inputs
+        [monthlyInvestment, age, returnRate, annuityPurchase, annuityReturn].forEach(input => {
+            input.addEventListener('input', calculateNPS);
+        });
+
+        // Initial calculation
+        calculateNPS();
+    </script>
+</body>
+</html>
