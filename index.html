@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,48 +12,129 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        /* Theme Variables */
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --container-bg: white;
+            --input-section-bg: #f8f9fa;
+            --text-color: #2d3436;
+            --label-color: #2d3436;
+            --input-border: #dfe6e9;
+            --card-bg: white;
+            --ring-bg: #dfe6e9;
+            --ring-progress: #00b894;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="material-blue"] {
+            --bg-gradient: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
+            --container-bg: white;
+            --input-section-bg: #E3F2FD;
+            --text-color: #1565C0;
+            --label-color: #1976D2;
+            --input-border: #90CAF9;
+            --card-bg: white;
+            --ring-bg: #BBDEFB;
+            --ring-progress: #1976D2;
+            --shadow-color: rgba(25, 118, 210, 0.2);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
+            --container-bg: #2d3436;
+            --input-section-bg: #222831;
+            --text-color: #ffffff;
+            --label-color: #90CAF9;
+            --input-border: #404040;
+            --card-bg: #222831;
+            --ring-bg: #404040;
+            --ring-progress: #4CAF50;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: var(--bg-gradient);
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: background 0.3s ease;
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
-            background: white;
+            background: var(--container-bg);
             border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 30px var(--shadow-color);
             padding: 30px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
+            transition: all 0.3s ease;
         }
 
         .title {
             grid-column: 1 / -1;
             text-align: center;
-            color: #2d3436;
+            color: var(--text-color);
             margin-bottom: 20px;
             font-size: 28px;
         }
 
+        .theme-buttons {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .theme-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn.light {
+            background: #f5f7fa;
+            color: #2d3436;
+        }
+
+        .theme-btn.material-blue {
+            background: #1976D2;
+            color: white;
+        }
+
+        .theme-btn.dark {
+            background: #222831;
+            color: white;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
         .input-section {
             padding: 20px;
-            background: #f8f9fa;
+            background: var(--input-section-bg);
             border-radius: 15px;
+            transition: all 0.3s ease;
         }
 
         .result-section {
             padding: 20px;
-            background: #f8f9fa;
+            background: var(--input-section-bg);
             border-radius: 15px;
             display: flex;
             flex-direction: column;
             gap: 20px;
+            transition: all 0.3s ease;
         }
 
         .input-group {
@@ -63,37 +144,58 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #2d3436;
+            color: var(--label-color);
             font-weight: 500;
         }
 
         input[type="number"], input[type="range"] {
             width: 100%;
             padding: 10px;
-            border: 2px solid #dfe6e9;
+            border: 2px solid var(--input-border);
             border-radius: 8px;
             font-size: 16px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
         }
 
         input[type="range"] {
             padding: 0;
+            -webkit-appearance: none;
+            background: var(--ring-bg);
+            height: 8px;
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--ring-progress);
+            border-radius: 50%;
+            cursor: pointer;
         }
 
         .result-card {
-            background: white;
+            background: var(--card-bg);
             padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
         }
 
         .result-title {
-            color: #636e72;
+            color: var(--label-color);
             font-size: 14px;
             margin-bottom: 5px;
         }
 
         .result-value {
-            color: #2d3436;
+            color: var(--text-color);
             font-size: 24px;
             font-weight: bold;
         }
@@ -115,6 +217,12 @@
     <div class="container">
         <h1 class="title">NPS Calculator</h1>
         
+        <div class="theme-buttons">
+            <button class="theme-btn light" onclick="setTheme('light')">Light Theme</button>
+            <button class="theme-btn material-blue" onclick="setTheme('material-blue')">Material Blue</button>
+            <button class="theme-btn dark" onclick="setTheme('dark')">Dark Theme</button>
+        </div>
+
         <div class="input-section">
             <div class="input-group">
                 <label for="monthlyInvestment">Monthly Investment (₹)</label>
@@ -172,6 +280,12 @@
     </div>
 
     <script>
+        // Theme switching function
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            calculateNPS(); // Recalculate to update the progress ring colors
+        }
+
         // Get all input elements
         const monthlyInvestment = document.getElementById('monthlyInvestment');
         const age = document.getElementById('age');
@@ -190,10 +304,23 @@
         const monthlyPension = document.getElementById('monthlyPension');
 
         // Update display values for range inputs
-        age.addEventListener('input', () => ageValue.textContent = age.value);
-        returnRate.addEventListener('input', () => returnValue.textContent = returnRate.value);
-        annuityPurchase.addEventListener('input', () => annuityValue.textContent = annuityPurchase.value);
-        annuityReturn.addEventListener('input', () => annuityReturnValue.textContent = annuityReturn.value);
+        age.addEventListener('input', () => {
+            ageValue.textContent = age.value;
+            calculateNPS();
+        });
+        returnRate.addEventListener('input', () => {
+            returnValue.textContent = returnRate.value;
+            calculateNPS();
+        });
+        annuityPurchase.addEventListener('input', () => {
+            annuityValue.textContent = annuityPurchase.value;
+            calculateNPS();
+        });
+        annuityReturn.addEventListener('input', () => {
+            annuityReturnValue.textContent = annuityReturn.value;
+            calculateNPS();
+        });
+        monthlyInvestment.addEventListener('input', calculateNPS);
 
         // Calculate NPS returns
         function calculateNPS() {
@@ -240,7 +367,7 @@
                         cy="100"
                         r="${radius}"
                         fill="none"
-                        stroke="#dfe6e9"
+                        stroke="var(--ring-bg)"
                         stroke-width="20"
                     />
                     <circle
@@ -248,7 +375,7 @@
                         cy="100"
                         r="${radius}"
                         fill="none"
-                        stroke="#00b894"
+                        stroke="var(--ring-progress)"
                         stroke-width="20"
                         stroke-dasharray="${circumference}"
                         stroke-dashoffset="${circumference - progress}"
@@ -261,18 +388,11 @@
                         dominant-baseline="middle"
                         font-size="24"
                         font-weight="bold"
-                        fill="#2d3436"
+                        fill="var(--text-color)"
                     >${Math.round(percentage * 100)}%</text>
                 </svg>
             `;
         }
-
-        // Add event listeners to all inputs
-        [monthlyInvestment, age, returnRate, annuityPurchase, annuityReturn].forEach(input => {
-            input.addEventListener('input', calculateNPS);
-        });
-
-        // Initial calculation
         calculateNPS();
     </script>
 </body>
