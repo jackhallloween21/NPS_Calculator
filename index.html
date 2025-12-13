@@ -25,6 +25,7 @@
             --ring-bg: #dfe6e9;
             --ring-progress: #00b894;
             --shadow-color: rgba(0, 0, 0, 0.1);
+            --btn-text-color: #2d3436;
         }
 
         [data-theme="material-blue"] {
@@ -38,6 +39,7 @@
             --ring-bg: #BBDEFB;
             --ring-progress: #1976D2;
             --shadow-color: rgba(25, 118, 210, 0.2);
+            --btn-text-color: white;
         }
 
         [data-theme="dark"] {
@@ -51,6 +53,7 @@
             --ring-bg: #404040;
             --ring-progress: #4CAF50;
             --shadow-color: rgba(0, 0, 0, 0.3);
+            --btn-text-color: white;
         }
 
         body {
@@ -61,6 +64,7 @@
             justify-content: center;
             align-items: center;
             transition: background 0.3s ease;
+            color: var(--text-color); /* ensure default text color follows theme */
         }
 
         .container {
@@ -74,6 +78,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             transition: all 0.3s ease;
+            color: var(--text-color); /* inherit theme text color */
         }
 
         .title {
@@ -99,21 +104,19 @@
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s ease;
+            color: var(--btn-text-color); /* use theme-aware button text color */
         }
 
         .theme-btn.light {
             background: #f5f7fa;
-            color: #2d3436;
         }
 
         .theme-btn.material-blue {
             background: #1976D2;
-            color: white;
         }
 
         .theme-btn.dark {
             background: #222831;
-            color: white;
         }
 
         .theme-btn:hover {
@@ -126,6 +129,7 @@
             background: var(--input-section-bg);
             border-radius: 15px;
             transition: all 0.3s ease;
+            color: var(--text-color);
         }
 
         .result-section {
@@ -136,6 +140,7 @@
             flex-direction: column;
             gap: 20px;
             transition: all 0.3s ease;
+            color: var(--text-color);
         }
 
         .input-group {
@@ -149,6 +154,7 @@
             font-weight: 500;
         }
 
+        /* Ensure all inputs use theme text color */
         input[type="number"], input[type="range"] {
             width: 100%;
             padding: 10px;
@@ -183,6 +189,7 @@
             border-radius: 10px;
             box-shadow: 0 5px 15px var(--shadow-color);
             transition: all 0.3s ease;
+            color: var(--text-color);
         }
 
         .result-card:hover {
@@ -205,6 +212,11 @@
             width: 200px;
             height: 200px;
             margin: 0 auto;
+        }
+
+        /* Make svg text inherit theme color */
+        .progress-ring svg text {
+            fill: var(--text-color);
         }
 
         @media (max-width: 768px) {
