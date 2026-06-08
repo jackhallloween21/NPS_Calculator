@@ -1,412 +1,333 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" type="image/x-icon" href="https://i.imgur.com/3OYhmFz.png" />
-    <title>NPS Calculator</title>
+    <title>NPS Calculator Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        
+        :root { --primary: #3b82f6; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s; }
+        
+        .accent-bg { background-color: var(--primary); }
+        .accent-text { color: var(--primary); }
+        .accent-ring { --tw-ring-color: var(--primary); }
+        input[type="range"] { accent-color: var(--primary); }
 
-        /* Theme Variables */
-        [data-theme="light"] {
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --container-bg: white;
-            --input-section-bg: #f8f9fa;
-            --text-color: #2d3436;
-            --label-color: #2d3436;
-            --input-border: #dfe6e9;
-            --card-bg: white;
-            --ring-bg: #dfe6e9;
-            --ring-progress: #00b894;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --btn-text-color: #2d3436;
+        /* Expanding Animation */
+        #themeDrawer {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
         }
-
-        [data-theme="material-blue"] {
-            --bg-gradient: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
-            --container-bg: white;
-            --input-section-bg: #E3F2FD;
-            --text-color: #1565C0;
-            --label-color: #1976D2;
-            --input-border: #90CAF9;
-            --card-bg: white;
-            --ring-bg: #BBDEFB;
-            --ring-progress: #1976D2;
-            --shadow-color: rgba(25, 118, 210, 0.2);
-            --btn-text-color: white;
-        }
-
-        [data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%);
-            --container-bg: #2d3436;
-            --input-section-bg: #222831;
-            --text-color: #ffffff;
-            --label-color: #90CAF9;
-            --input-border: #404040;
-            --card-bg: #222831;
-            --ring-bg: #404040;
-            --ring-progress: #4CAF50;
-            --shadow-color: rgba(0, 0, 0, 0.3);
-            --btn-text-color: white;
-        }
-
-        body {
-            min-height: 100vh;
-            background: var(--bg-gradient);
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background 0.3s ease;
-            color: var(--text-color); /* ensure default text color follows theme */
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            background: var(--container-bg);
-            border-radius: 20px;
-            box-shadow: 0 15px 30px var(--shadow-color);
-            padding: 30px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            transition: all 0.3s ease;
-            color: var(--text-color); /* inherit theme text color */
-        }
-
-        .title {
-            grid-column: 1 / -1;
-            text-align: center;
-            color: var(--text-color);
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-
-        .theme-buttons {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .theme-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            color: var(--btn-text-color); /* use theme-aware button text color */
-        }
-
-        .theme-btn.light {
-            background: #f5f7fa;
-        }
-
-        .theme-btn.material-blue {
-            background: #1976D2;
-        }
-
-        .theme-btn.dark {
-            background: #222831;
-        }
-
-        .theme-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px var(--shadow-color);
-        }
-
-        .input-section {
-            padding: 20px;
-            background: var(--input-section-bg);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            color: var(--text-color);
-        }
-
-        .result-section {
-            padding: 20px;
-            background: var(--input-section-bg);
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            transition: all 0.3s ease;
-            color: var(--text-color);
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--label-color);
-            font-weight: 500;
-        }
-
-        /* Ensure all inputs use theme text color */
-        input[type="number"], input[type="range"] {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--card-bg);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        input[type="range"] {
-            padding: 0;
-            -webkit-appearance: none;
-            background: var(--ring-bg);
-            height: 8px;
-            border: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--ring-progress);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .result-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px var(--shadow-color);
-            transition: all 0.3s ease;
-            color: var(--text-color);
-        }
-
-        .result-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .result-title {
-            color: var(--label-color);
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .result-value {
-            color: var(--text-color);
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .progress-ring {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-        }
-
-        /* Make svg text inherit theme color */
-        .progress-ring svg text {
-            fill: var(--text-color);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+        #themeDrawer.expanded {
+            max-width: 300px;
+            opacity: 1;
+            margin-left: 12px;
         }
     </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: {} }
+        }
+    </script>
 </head>
-<body>
-    <div class="container">
-        <h1 class="title">NPS Calculator</h1>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
+
+<div class="max-w-6xl mx-auto p-4 md:p-8">
+    
+    <!-- TOP NAVIGATION -->
+    <header class="flex flex-wrap justify-between items-center mb-10 gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">NPS Calculator</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">Modern Retirement Planning</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <!-- Expanding Color Theme Picker -->
+            <div class="flex items-center bg-white dark:bg-slate-900 p-2 rounded-full shadow-lg border border-slate-200 dark:border-slate-800">
+                <button onclick="toggleThemeDrawer()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 accent-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                    </svg>
+                </button>
+                <div id="themeDrawer" class="flex gap-2">
+                    <button onclick="setAccent('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500"></button>
+                    <button onclick="setAccent('#8b5cf6')" class="w-6 h-6 rounded-full bg-violet-500"></button>
+                    <button onclick="setAccent('#10b981')" class="w-6 h-6 rounded-full bg-emerald-500"></button>
+                    <button onclick="setAccent('#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500"></button>
+                    <button onclick="setAccent('#f59e0b')" class="w-6 h-6 rounded-full bg-amber-500"></button>
+                </div>
+            </div>
+
+            <!-- Dark Mode Toggle -->
+            <button onclick="toggleDarkMode()" class="w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 shadow-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-amber-400 hover:scale-105 transition-transform">
+                <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <div class="theme-buttons">
-            <button class="theme-btn light" onclick="setTheme('light')">Light Theme</button>
-            <button class="theme-btn material-blue" onclick="setTheme('material-blue')">Material Blue</button>
-            <button class="theme-btn dark" onclick="setTheme('dark')">Dark Theme</button>
+        <!-- INPUT COLUMN -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
+                <h3 class="text-lg font-bold mb-8 flex items-center gap-2">
+                    <span class="w-1.5 h-6 accent-bg rounded-full"></span> Investment Details
+                </h3>
+
+                <div class="space-y-8">
+                    <!-- DOB -->
+                    <div>
+                        <label class="text-xs font-bold uppercase text-slate-400 tracking-wider block mb-3">Date of Birth</label>
+                        <input type="date" id="dob" class="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none ring-1 ring-slate-200 dark:ring-slate-700 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 transition-all">
+                    </div>
+
+                    <!-- Ages -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-500">Current Age</label>
+                                <input type="number" id="ageBox" class="w-12 text-right font-bold accent-text bg-transparent" value="30">
+                            </div>
+                            <input type="range" id="ageSlider" min="18" max="65" value="30" class="w-full">
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-500">Invest Till Age</label>
+                                <input type="number" id="untilBox" class="w-12 text-right font-bold accent-text bg-transparent" value="60">
+                            </div>
+                            <input type="range" id="untilSlider" min="20" max="75" value="60" class="w-full">
+                        </div>
+                    </div>
+
+                    <!-- Monthly -->
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Monthly Contribution (₹)</label>
+                            <input type="number" id="monthlyBox" class="w-24 text-right font-bold accent-text bg-transparent text-lg" value="10000">
+                        </div>
+                        <input type="range" id="monthlySlider" min="500" max="150000" step="500" value="10000" class="w-full">
+                    </div>
+
+                    <!-- Existing -->
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase">Existing Tier-1 Balance (₹)</label>
+                            <input type="number" id="existingBox" class="w-32 text-right font-bold accent-text bg-transparent" value="0">
+                        </div>
+                        <input type="range" id="existingSlider" min="0" max="10000000" step="10000" value="0" class="w-full">
+                    </div>
+
+                    <!-- ROI & Annuity ROI -->
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-500">Exp. ROI %</label>
+                                <input type="number" id="roiBox" step="0.5" class="w-12 text-right font-bold accent-text bg-transparent" value="10">
+                            </div>
+                            <input type="range" id="roiSlider" min="1" max="15" step="0.5" value="10" class="w-full">
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-500">Annuity ROI %</label>
+                                <input type="number" id="annRoiBox" step="0.1" class="w-12 text-right font-bold accent-text bg-transparent" value="6">
+                            </div>
+                            <input type="range" id="annRoiSlider" min="3" max="12" step="0.1" value="6" class="w-full">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="input-section">
-            <div class="input-group">
-                <label for="monthlyInvestment">Monthly Investment (₹)</label>
-                <input type="number" id="monthlyInvestment" value="500" min="500">
-            </div>
-
-            <div class="input-group">
-                <label for="age">Your Age (years)</label>
-                <input type="range" id="age" min="18" max="60" value="30">
-                <span id="ageValue">30</span>
-            </div>
-
-            <div class="input-group">
-                <label for="returnRate">Expected Return on Investment (%)</label>
-                <input type="range" id="returnRate" min="1" max="20" value="13">
-                <span id="returnValue">13</span>
-            </div>
-
-            <div class="input-group">
-                <label for="annuityPurchase">Percentage of Annuity Purchase (%)</label>
-                <input type="range" id="annuityPurchase" min="0" max="100" value="40">
-                <span id="annuityValue">40</span>
-            </div>
-
-            <div class="input-group">
-                <label for="annuityReturn">Expected Return of Annuity (%)</label>
-                <input type="range" id="annuityReturn" min="1" max="15" value="8">
-                <span id="annuityReturnValue">8</span>
-            </div>
-        </div>
-
-        <div class="result-section">
-            <div class="progress-ring" id="progressRing"></div>
+        <!-- RESULTS COLUMN -->
+        <div class="lg:col-span-7 space-y-6">
             
-            <div class="result-card">
-                <div class="result-title">Invested Amount</div>
-                <div class="result-value" id="investedAmount">₹0</div>
+            <!-- Hero Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="accent-bg p-8 rounded-[2rem] text-white shadow-2xl relative overflow-hidden transition-all duration-500" id="pensionCard">
+                    <p class="text-white/80 text-sm font-bold uppercase tracking-wider mb-2">Monthly Pension</p>
+                    <h2 class="text-5xl font-black mb-1" id="resPension">₹0</h2>
+                    <svg class="absolute -right-4 -bottom-4 w-32 h-32 text-white/10" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path></svg>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
+                    <p class="text-slate-400 dark:text-slate-500 text-sm font-bold uppercase mb-2">Total Corpus</p>
+                    <h2 class="text-4xl font-black dark:text-white" id="resCorpus">₹0</h2>
+                </div>
             </div>
 
-            <div class="result-card">
-                <div class="result-title">Pension Wealth</div>
-                <div class="result-value" id="pensionWealth">₹0</div>
+            <!-- Breakdown -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Invested</p>
+                    <p class="text-lg font-bold" id="resInvested">₹0</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Gains</p>
+                    <p class="text-lg font-bold text-emerald-500" id="resGains">₹0</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Lumpsum</p>
+                    <p class="text-lg font-bold text-orange-500" id="resLumpsum">₹0</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Annuity</p>
+                    <p class="text-lg font-bold text-violet-500" id="resAnnuity">₹0</p>
+                </div>
             </div>
 
-            <div class="result-card">
-                <div class="result-title">Lumpsum Amount</div>
-                <div class="result-value" id="lumpsumAmount">₹0</div>
-            </div>
-
-            <div class="result-card">
-                <div class="result-title">Monthly Pension</div>
-                <div class="result-value" id="monthlyPension">₹0</div>
+            <!-- Visuals -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
+                    <p class="text-center font-bold text-slate-400 text-xs uppercase mb-4 tracking-widest">Growth</p>
+                    <div class="h-60"><canvas id="barChart"></canvas></div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-xl border border-slate-100 dark:border-slate-800">
+                    <p class="text-center font-bold text-slate-400 text-xs uppercase mb-4 tracking-widest">Split</p>
+                    <div class="h-60"><canvas id="pieChart"></canvas></div>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Theme switching function
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            calculateNPS(); // Recalculate to update the progress ring colors
+<script>
+    const state = {
+        age: 30, until: 60, monthly: 10000, existing: 0, roi: 10, annRoi: 6,
+        primary: '#3b82f6', charts: {}
+    };
+
+    function toggleDarkMode() {
+        const html = document.documentElement;
+        const icon = document.getElementById('themeIcon');
+        if (html.classList.contains('dark')) {
+            html.classList.remove('dark');
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+        } else {
+            html.classList.add('dark');
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 11H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.95 16.95l.707.707M7.05 7.05l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />';
         }
+        calculate();
+    }
 
-        // Get all input elements
-        const monthlyInvestment = document.getElementById('monthlyInvestment');
-        const age = document.getElementById('age');
-        const returnRate = document.getElementById('returnRate');
-        const annuityPurchase = document.getElementById('annuityPurchase');
-        const annuityReturn = document.getElementById('annuityReturn');
+    function toggleThemeDrawer() {
+        document.getElementById('themeDrawer').classList.toggle('expanded');
+    }
 
-        // Get all display elements
-        const ageValue = document.getElementById('ageValue');
-        const returnValue = document.getElementById('returnValue');
-        const annuityValue = document.getElementById('annuityValue');
-        const annuityReturnValue = document.getElementById('annuityReturnValue');
-        const investedAmount = document.getElementById('investedAmount');
-        const pensionWealth = document.getElementById('pensionWealth');
-        const lumpsumAmount = document.getElementById('lumpsumAmount');
-        const monthlyPension = document.getElementById('monthlyPension');
+    function setAccent(color) {
+        state.primary = color;
+        document.documentElement.style.setProperty('--primary', color);
+        calculate();
+    }
 
-        // Update display values for range inputs
-        age.addEventListener('input', () => {
-            ageValue.textContent = age.value;
-            calculateNPS();
+    function init() {
+        const sync = (id) => {
+            const slider = document.getElementById(id + 'Slider');
+            const box = document.getElementById(id + 'Box');
+            slider.addEventListener('input', () => { box.value = slider.value; calculate(); });
+            box.addEventListener('input', () => { slider.value = box.value; calculate(); });
+        };
+        ['age', 'until', 'monthly', 'existing', 'roi', 'annRoi'].forEach(sync);
+
+        document.getElementById('dob').addEventListener('change', function() {
+            const age = new Date().getFullYear() - new Date(this.value).getFullYear();
+            document.getElementById('ageSlider').value = age;
+            document.getElementById('ageBox').value = age;
+            calculate();
         });
-        returnRate.addEventListener('input', () => {
-            returnValue.textContent = returnRate.value;
-            calculateNPS();
+        calculate();
+    }
+
+    function format(num) {
+        if (num >= 10000000) return "₹" + (num / 10000000).toFixed(2) + " Cr";
+        if (num >= 100000) return "₹" + (num / 100000).toFixed(2) + " L";
+        return "₹" + new Intl.NumberFormat('en-IN').format(Math.round(num));
+    }
+
+    function calculate() {
+        const curAge = parseInt(document.getElementById('ageSlider').value);
+        const endAge = parseInt(document.getElementById('untilSlider').value);
+        const monthly = parseFloat(document.getElementById('monthlySlider').value);
+        const existing = parseFloat(document.getElementById('existingSlider').value);
+        const roi = parseFloat(document.getElementById('roiSlider').value) / 100;
+        const annRoi = parseFloat(document.getElementById('annRoiSlider').value) / 100;
+
+        const years = Math.max(0, endAge - curAge);
+        const months = years * 12;
+        const r = roi / 12;
+
+        const fvMonthly = months > 0 ? monthly * ((Math.pow(1 + r, months) - 1) / r) * (1 + r) : 0;
+        const fvExisting = existing * Math.pow(1 + r, months);
+        
+        const totalCorpus = fvMonthly + fvExisting;
+        const totalInvested = (monthly * months) + existing;
+        const totalGains = totalCorpus - totalInvested;
+        const annuityAmt = totalCorpus * 0.40; // Standard 40%
+        const lumpsumAmt = totalCorpus - annuityAmt;
+        const monthlyPension = (annuityAmt * annRoi) / 12;
+
+        document.getElementById('resPension').innerText = format(monthlyPension);
+        document.getElementById('resCorpus').innerText = format(totalCorpus);
+        document.getElementById('resInvested').innerText = format(totalInvested);
+        document.getElementById('resGains').innerText = format(totalGains);
+        document.getElementById('resLumpsum').innerText = format(lumpsumAmt);
+        document.getElementById('resAnnuity').innerText = format(annuityAmt);
+
+        updateCharts(totalInvested, totalGains, totalCorpus, lumpsumAmt, annuityAmt);
+    }
+
+    function updateCharts(invested, gains, total, lumpsum, annuity) {
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#94a3b8' : '#64748b';
+
+        if (state.charts.bar) state.charts.bar.destroy();
+        if (state.charts.pie) state.charts.pie.destroy();
+
+        state.charts.bar = new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Invested', 'Gains', 'Corpus'],
+                datasets: [{
+                    data: [invested, gains, total],
+                    backgroundColor: ['#94a3b8', state.primary, state.primary + '66'],
+                    borderRadius: 12
+                }]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false, 
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { ticks: { color: textColor, callback: v => format(v) }, grid: { display: false } },
+                    x: { ticks: { color: textColor }, grid: { display: false } }
+                }
+            }
         });
-        annuityPurchase.addEventListener('input', () => {
-            annuityValue.textContent = annuityPurchase.value;
-            calculateNPS();
+
+        state.charts.pie = new Chart(document.getElementById('pieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Lumpsum', 'Annuity'],
+                datasets: [{
+                    data: [lumpsum, annuity],
+                    backgroundColor: ['#f59e0b', '#8b5cf6'],
+                    borderWidth: 0
+                }]
+            },
+            options: { 
+                responsive: true, maintainAspectRatio: false, cutout: '75%',
+                plugins: { legend: { position: 'bottom', labels: { color: textColor, usePointStyle: true } } }
+            }
         });
-        annuityReturn.addEventListener('input', () => {
-            annuityReturnValue.textContent = annuityReturn.value;
-            calculateNPS();
-        });
-        monthlyInvestment.addEventListener('input', calculateNPS);
+    }
 
-        // Calculate NPS returns
-        function calculateNPS() {
-            const monthly = parseFloat(monthlyInvestment.value);
-            const years = 60 - parseFloat(age.value);
-            const rate = parseFloat(returnRate.value) / 100;
-            const annuityPerc = parseFloat(annuityPurchase.value) / 100;
-            const annuityRate = parseFloat(annuityReturn.value) / 100;
-
-            // Calculate total investment
-            const totalInvestment = monthly * 12 * years;
-
-            // Calculate pension wealth using compound interest formula
-            const pensionWealthValue = monthly * (Math.pow(1 + rate/12, 12 * years) - 1) / (rate/12);
-
-            // Calculate lumpsum and annuity amounts
-            const annuityAmount = pensionWealthValue * annuityPerc;
-            const lumpsumValue = pensionWealthValue * (1 - annuityPerc);
-
-            // Calculate monthly pension (simplified calculation)
-            const monthlyPensionValue = (annuityAmount * annuityRate) / 12;
-
-            // Update display values
-            investedAmount.textContent = `₹${Math.round(totalInvestment).toLocaleString()}`;
-            pensionWealth.textContent = `₹${Math.round(pensionWealthValue).toLocaleString()}`;
-            lumpsumAmount.textContent = `₹${Math.round(lumpsumValue).toLocaleString()}`;
-            monthlyPension.textContent = `₹${Math.round(monthlyPensionValue).toLocaleString()}`;
-
-            // Update progress ring
-            updateProgressRing(annuityPerc);
-        }
-
-        // Create and update SVG progress ring
-        function updateProgressRing(percentage) {
-            const progressRing = document.getElementById('progressRing');
-            const radius = 80;
-            const circumference = 2 * Math.PI * radius;
-            const progress = percentage * circumference;
-
-            progressRing.innerHTML = `
-                <svg width="200" height="200" viewBox="0 0 200 200">
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r="${radius}"
-                        fill="none"
-                        stroke="var(--ring-bg)"
-                        stroke-width="20"
-                    />
-                    <circle
-                        cx="100"
-                        cy="100"
-                        r="${radius}"
-                        fill="none"
-                        stroke="var(--ring-progress)"
-                        stroke-width="20"
-                        stroke-dasharray="${circumference}"
-                        stroke-dashoffset="${circumference - progress}"
-                        transform="rotate(-90 100 100)"
-                    />
-                    <text
-                        x="100"
-                        y="100"
-                        text-anchor="middle"
-                        dominant-baseline="middle"
-                        font-size="24"
-                        font-weight="bold"
-                        fill="var(--text-color)"
-                    >${Math.round(percentage * 100)}%</text>
-                </svg>
-            `;
-        }
-        calculateNPS();
-    </script>
+    init();
+</script>
 </body>
 </html>
