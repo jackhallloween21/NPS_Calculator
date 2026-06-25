@@ -144,6 +144,18 @@
                             <input type="range" id="annRoiSlider" min="3" max="12" step="0.1" value="6" class="w-full">
                         </div>
                     </div>
+
+                    <!-- Annuity Allocation -->
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-xs font-bold text-slate-500">Annuity Allocation</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="annuityPctBox" min="0" max="100" step="1" class="w-16 text-right font-bold accent-text bg-transparent" value="40">
+                                <span class="text-slate-400">%</span>
+                            </div>
+                        </div>
+                        <input type="range" id="annuityPctSlider" min="0" max="100" step="1" value="40" class="w-full">
+                    </div>
                 </div>
             </div>
         </div>
@@ -201,7 +213,7 @@
 
 <script>
     const state = {
-        age: 30, until: 60, monthly: 10000, existing: 0, roi: 10, annRoi: 6,
+        age: 30, until: 60, monthly: 10000, existing: 0, roi: 10, annRoi: 6, annuityPct: 40,
         primary: '#3b82f6', charts: {}
     };
 
@@ -235,7 +247,7 @@
             slider.addEventListener('input', () => { box.value = slider.value; calculate(); });
             box.addEventListener('input', () => { slider.value = box.value; calculate(); });
         };
-        ['age', 'until', 'monthly', 'existing', 'roi', 'annRoi'].forEach(sync);
+        ['age', 'until', 'monthly', 'existing', 'roi', 'annRoi', 'annuityPct'].forEach(sync);
 
         document.getElementById('dob').addEventListener('change', function() {
             const age = new Date().getFullYear() - new Date(this.value).getFullYear();
@@ -259,6 +271,7 @@
         const existing = parseFloat(document.getElementById('existingSlider').value);
         const roi = parseFloat(document.getElementById('roiSlider').value) / 100;
         const annRoi = parseFloat(document.getElementById('annRoiSlider').value) / 100;
+        const annuityPct = Math.min(1, Math.max(0, parseFloat(document.getElementById('annuityPctSlider').value) / 100));
 
         const years = Math.max(0, endAge - curAge);
         const months = years * 12;
@@ -270,7 +283,7 @@
         const totalCorpus = fvMonthly + fvExisting;
         const totalInvested = (monthly * months) + existing;
         const totalGains = totalCorpus - totalInvested;
-        const annuityAmt = totalCorpus * 0.40; // Standard 40%
+        const annuityAmt = totalCorpus * annuityPct;
         const lumpsumAmt = totalCorpus - annuityAmt;
         const monthlyPension = (annuityAmt * annRoi) / 12;
 
